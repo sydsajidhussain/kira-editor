@@ -1,5 +1,6 @@
 [package]
 name = "kira-editor"
+authors = ["sajid <sysajid98@gmail.com>"]
 version = "0.1.0"
 edition = "2021"
 
