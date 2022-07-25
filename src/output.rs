@@ -1,7 +1,7 @@
 use std::io::{stdout, Stdout, Write};
 use log::info;
 
-use crossterm::{cursor, terminal, QueueableCommand, Result, style::Print};
+use crossterm::{cursor, terminal, terminal::size, QueueableCommand, Result, style::Print};
 
 pub fn clear_screen(stdout: &mut Stdout) -> Result<()> {
     stdout
@@ -26,7 +26,9 @@ pub fn die<S: Into<String>>(message: S) {
 }
 
 pub fn editor_draw_rows(stdout: &mut Stdout) -> Result<()> {
-    for row in 0..24 {
+
+    let (columns, rows) = size()?;
+    for row in 0..rows {
         stdout
             .queue(cursor::MoveTo(0, row))?
             .queue(Print("~".to_string()))?;
