@@ -1,5 +1,4 @@
 use crossterm::event::{read, KeyEvent};
-
 use crate::*;
 
 pub fn editor_read_key() -> Result<KeyEvent> {
