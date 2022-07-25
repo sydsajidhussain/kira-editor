@@ -1,7 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use crossterm::{event::Event::*, terminal, Result};
 
-
 use crate::keyboard::*;
 
 pub fn editor_process_keypress() -> bool {
