@@ -45,14 +45,14 @@ impl Screen {
                         .queue(Print("~".to_string()))?;
                 }
             } else {
-                let row_len = if erows[0].len() > self.width as usize {
+                let row_len = if erows[row as usize].len() > self.width as usize {
                     self.width as usize
                 } else {
-                    erows[0].len()
+                    erows[row as usize].len()
                 };
                 self.stdout
                     .queue(cursor::MoveTo(0, row))?
-                    .queue(Print(erows[0][0..row_len].to_string() ))?;
+                    .queue(Print(erows[row as usize][0..row_len].to_string() ))?;
             }
         }
         Ok(())

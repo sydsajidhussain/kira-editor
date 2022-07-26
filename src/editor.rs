@@ -23,18 +23,17 @@ impl Editor {
     }
 
     pub fn new_with_file<T: AsRef<Path>>(filename: T) -> Result<Self> {
-        let line1 = std::fs::read_to_string(filename)
+        let lines: Vec<String> = std::fs::read_to_string(filename)
             .expect("Unable to open file")
             .split('\n')
-            .next()
-            .unwrap()
-            .to_string(); 
+            .map(|x| x.into())
+            .collect(); 
 
         Ok(Self {
             screen: Screen::new()?,
             keyboard: Keyboard {},
             cursor: Position::default(),
-            erows: vec![line1]
+            erows: lines
         })
     }
 
@@ -108,7 +107,7 @@ impl Editor {
         match key {
             'a' => {
                 self.cursor.x = self.cursor.x.saturating_sub(1);
-            }
+            },
             'd' => self.cursor.x += 1,
             'w' => {
                 self.cursor.y = self.cursor.y.saturating_sub(1);
