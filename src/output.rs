@@ -27,8 +27,8 @@ pub fn die<S: Into<String>>(message: S) {
 
 #[derive(Default)]
 pub Struct Position {
-    pub row : u16,
-    pub col: u16
+    pub x : u16,
+    pub y: u16
 }
 
 pub fn editor_draw_rows(stdout: &mut Stdout) -> Result<()> {
