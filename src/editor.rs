@@ -8,6 +8,7 @@ pub struct Editor {
     screen: Screen,
     keyboard: Keyboard,
     cursor: Position,
+    erows : Vec<String>
 }
 
 impl Editor {
@@ -16,6 +17,7 @@ impl Editor {
             screen: Screen::new()?,
             keyboard: Keyboard {},
             cursor: Position::default(),
+            erows: vec!["hello world!".to_string()]
         })
     }
 
@@ -75,7 +77,7 @@ impl Editor {
 
     pub fn refresh_screen(&mut self) -> Result<()> {
         self.screen.clear()?;
-        self.screen.draw_rows()
+        self.screen.draw_rows(&self.erows)
     }
 
     pub fn die(&mut self, msg: String) {
