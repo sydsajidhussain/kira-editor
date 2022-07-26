@@ -3,6 +3,8 @@ use crossterm::{terminal, Result};
 use kira_editor::*;
 use crate::keyboard::*;
 use crate::editor_screen::*;
+use std::path::Path;
+
 
 pub struct Editor {
     screen: Screen,
@@ -12,12 +14,19 @@ pub struct Editor {
 }
 
 impl Editor {
-    pub fn new() -> Result<Self> {
+    pub fn new<T: AsRef<Path>>(filename: T) -> Result<Self> {
+        let line1 = std::fs::read_to_string(filename)
+            .expect("Unable to open file")
+            .split('\n')
+            .next()
+            .unwrap()
+            .to_string(); 
+
         Ok(Self {
             screen: Screen::new()?,
             keyboard: Keyboard {},
             cursor: Position::default(),
-            erows: vec!["hello world!".to_string()]
+            erows: vec![line1]
         })
     }
 
