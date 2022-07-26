@@ -24,7 +24,7 @@ impl Screen {
         
         for row in 0..self.height {
             if row >= erows.len() as u16{ 
-                if row == self.height / 3 {
+                if row == self.height-1  {
                     let mut description = "KIRA editor ---".to_owned() + VERSION;
                     description.truncate(self.width as usize);
                     if description.len() < self.width as usize {
