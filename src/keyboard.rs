@@ -1,16 +1,22 @@
-use crossterm::event::{read, KeyEvent};
-use crate::*;
+use crossterm::event::{read, Event::*, KeyEvent};
 
-pub fn editor_read_key() -> Result<KeyEvent> {
-    loop {
-        if let Ok(event) = read() {
-            if let Key(key_event) = event {
-                return Ok(key_event);
+use crate::*;
+use log::info;
+
+#[derive(Debug, Default)]
+pub struct Keyboard;
+
+impl Keyboard {
+    pub fn read(&self) -> Result<KeyEvent> {
+        loop {
+            if let Ok(event) = read() {
+                if let Key(key_event) = event {
+                    return Ok(key_event);
+                }
+            } else {
+                info!("failed to read key {:?}", &self);
+                eprintln!("failed to read key {:?}", &self);
             }
-        } else {
-            die("read");
-            break;
         }
     }
-    unreachable!();
 }
