@@ -11,9 +11,9 @@ fn main() -> Result<()> {
     let mut args = std::env::args();
     
     let mut editor = if args.len() >= 2 {        
-        Editor::new_with_file(args.nth(1).unwrap())?
+        Editor::new_with_file(&args.nth(1).unwrap())?
     } else {
-        Editor::new()?
+        Editor::new(&[],None)?
     };
 
     editor.init()?;

@@ -9,20 +9,22 @@ pub struct Editor {
     screen: Screen,
     keyboard: Keyboard,
     cursor: Position,
-    erows : Vec<String>
+    erows : Vec<String>,
+    filename: Option<String>
 }
 
 impl Editor {
-    pub fn new() -> Result<Self> {
+    pub fn new(data: &[String],filename: Option<String>) -> Result<Self> {
         Ok(Self {
             screen: Screen::new()?,
             keyboard: Keyboard {},
             cursor: Position::default(),
-            erows: Vec::new()
+            erows: Vec::new(),
+            filename: filename
         })
     }
 
-    pub fn new_with_file<T: AsRef<Path>>(filename: T) -> Result<Self> {
+    pub fn new_with_file<T: AsRef<Path>+ ToString>(filename:&T) -> Result<Self> {
         let lines: Vec<String> = std::fs::read_to_string(filename)
             .expect("Unable to open file")
             .split('\n')
@@ -33,7 +35,8 @@ impl Editor {
             screen: Screen::new()?,
             keyboard: Keyboard {},
             cursor: Position::default(),
-            erows: lines
+            erows: lines,
+            filename: Some(filename.to_string().to_string())
         })
     }
 
@@ -43,7 +46,13 @@ impl Editor {
                 KeyEvent {
                     code: KeyCode::Char('q'),
                     modifiers: KeyModifiers::CONTROL,
-                } => return Ok(true),
+                } => {
+                    return Ok(true)},
+                KeyEvent {
+                    code:KeyCode::Char('s'),
+                    modifiers: KeyModifiers::CONTROL, 
+                } => {
+                    self.save((&self.filename.as_ref().unwrap()))},
                 KeyEvent {
                     code: KeyCode::Up,
                     modifiers: _,
@@ -115,5 +124,15 @@ impl Editor {
             's' => self.cursor.y += 1,
             _ => self.die("invalid movement character".to_string()),
         }
+    }
+
+    fn save(&self, filename: &String) {
+
+        if self.filename.is_none() {
+            return;
+        } 
+        let buff: String = format!("{:?}",&self.erows);
+
+        let _ = std::fs::write(Path::new("&self.filename"), buff);
     }
 }
