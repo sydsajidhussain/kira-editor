@@ -52,7 +52,7 @@ impl Editor {
                     code:KeyCode::Char('s'),
                     modifiers: KeyModifiers::CONTROL, 
                 } => {
-                    self.save((&self.filename.as_ref().unwrap()))},
+                    self.save()},
                 KeyEvent {
                     code: KeyCode::Up,
                     modifiers: _,
@@ -79,7 +79,8 @@ impl Editor {
                 _ => {}
             }
         } else {
-            self.die("could not read from keyboard".to_string());
+            self.die("could not read from keyboard"
+            .to_string());
         }
         Ok(false)
     }
@@ -89,7 +90,8 @@ impl Editor {
 
         loop {
             if self.refresh_screen().is_err() {
-                self.die("unable to refresh screen".to_string());
+                self.die("unable to refresh screen"
+                .to_string());
             }
             self.screen.cursor_move_to(&self.cursor)?;
             self.screen.flush()?;
@@ -122,17 +124,19 @@ impl Editor {
                 self.cursor.y = self.cursor.y.saturating_sub(1);
             }
             's' => self.cursor.y += 1,
-            _ => self.die("invalid movement character".to_string()),
+            _ => self.die("invalid movement character"
+                .to_string()),
         }
     }
 
-    fn save(&self, filename: &String) {
+    fn save(&self) {
 
         if self.filename.is_none() {
             return;
         } 
         let buff: String = format!("{:?}",&self.erows);
 
-        let _ = std::fs::write(Path::new("&self.filename"), buff);
+        let _ = std::fs::write(&self.filename.as_ref()
+            .unwrap(), buff);
     }
 }
