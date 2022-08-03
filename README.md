@@ -8,3 +8,5 @@ arrow keys or w a s d => move the cursor,
 
 
 ctrl + q => exit,
+
+ctrl+s => save
