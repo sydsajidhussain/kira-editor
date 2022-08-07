@@ -6,8 +6,6 @@ mod editor_screen;
 mod editor;
 use editor::*;
 
-mod rows;
-
 
 fn main() -> Result<()> {
 

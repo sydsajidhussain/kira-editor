@@ -3,7 +3,6 @@ use crossterm::{terminal, Result};
 use kira_editor::*;
 use crate::keyboard::*;
 use crate::editor_screen::*;
-use crate::rows::*;
 use std::path::Path;
 
 pub struct Editor {
@@ -143,8 +142,7 @@ impl Editor{
         if self.filename.is_none() {
             return;
         } 
-        let buff: String = format!("{:?}",&self.erows);
-
+        let buff= String::from(self.erows.concat());
         let _ = std::fs::write(&self.filename.as_ref()
             .unwrap(), buff);
     }
