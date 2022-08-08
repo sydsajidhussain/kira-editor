@@ -142,7 +142,9 @@ impl Editor{
         if self.filename.is_none() {
             return;
         } 
-        let buff= String::from(self.erows.concat());
+
+        let buff = self.erows_to_string();
+
         let _ = std::fs::write(&self.filename.as_ref()
             .unwrap(), buff);
     }
@@ -155,4 +157,28 @@ impl Editor{
         self.erows[self.cursor.y as usize].insert(self.cursor.x as usize, c);
         self.cursor.x += 1;
     }
+
+    fn find(&mut self, query: String) {
+        
+            for (i, row) in self.erows.iter().enumerate() {
+                if let Some(m) = row.match_indices(query.as_str()).take(1).next() {
+                    self.cursor.y = i as u16;
+                    break;
+                }
+            }
+    }
+
+    fn erows_to_string(&self)-> String {
+
+        let mut buff = String::new();
+
+        for row in self.erows.iter() {
+            buff.push_str(row.chars().as_str());
+            buff.push('\n');
+        }
+
+        buff
+    } 
+
+
 }
