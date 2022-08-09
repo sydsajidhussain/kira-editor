@@ -4,6 +4,7 @@ use kira_editor::*;
 use crate::keyboard::*;
 use crate::editor_screen::*;
 use std::path::Path;
+use log::info;
 
 pub struct Editor {
     screen: Screen,
@@ -62,6 +63,19 @@ impl Editor{
                     modifiers: KeyModifiers::CONTROL, 
                 } => {
                     self.save()},
+                KeyEvent {
+                    code: KeyCode::Backspace,
+                    ..
+                }=> {
+                    if let KeyEvent {
+                        code: KeyCode::Delete,
+                        ..
+                    } = c
+                    {
+                        self.cursor.x += 1;
+                    }
+                    self.del_char();
+                },
                 KeyEvent {
                     code: KeyCode::Up,
                     modifiers: _,
@@ -168,6 +182,22 @@ impl Editor{
             }
     }
 
+    fn del_char(&mut self) {
+
+        if !self.cursor.above(self.erows.iter().len()) {
+            return;
+        }
+        if !self.cursor.above(self.erows.len()) {
+            self.erows.push(String::new());
+        }
+        self.erows[self.cursor.y as usize].remove(self.cursor.x as usize-1);
+        self.cursor.x -= 1;
+    }
+
+    fn smart_undo(&mut self) {
+       ()
+    }
+
     fn erows_to_string(&self)-> String {
 
         let mut buff = String::new();
@@ -176,9 +206,6 @@ impl Editor{
             buff.push_str(row.chars().as_str());
             buff.push('\n');
         }
-
         buff
-    } 
-
-
+    }
 }
