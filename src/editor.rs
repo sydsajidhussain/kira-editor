@@ -67,8 +67,15 @@ impl Editor{
                     code: KeyCode::Backspace,
                     ..
                 }=> {
-                    self.del_char_left();
+                    self.del_char();
                 },
+                KeyEvent {
+                    code: KeyCode::Delete,
+                    modifiers: _,
+                } => {{
+                    self.cursor.x += 1;
+                }
+                self.del_char();},
                 KeyEvent {
                     code: KeyCode::Up,
                     modifiers: _,
@@ -175,7 +182,7 @@ impl Editor{
             }
     }
 
-    fn del_char_left(&mut self) {
+    fn del_char(&mut self) {
 
         if !self.cursor.above(self.erows.len()) {
             return;
