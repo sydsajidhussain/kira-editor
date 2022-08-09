@@ -187,11 +187,10 @@ impl Editor{
         if !self.cursor.above(self.erows.len()) {
             return;
         }
-        if self.cursor.x == 0 && self.cursor.y == 0 {
-            return;
-        }
+        if self.cursor.x > 0 {
         self.erows[self.cursor.y as usize].remove(self.cursor.x as usize-1);
         self.cursor.x -= 1;
+        }
     }
 
     fn smart_undo(&mut self) {
