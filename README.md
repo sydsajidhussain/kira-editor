@@ -8,4 +8,8 @@ arrow keys to navigate the screen,
 
 ctrl + q => exit,
 
-ctrl+s => save
+ctrl+s => save and (save new file => ctrl+s -> filename -> enter key),
+
+line-wrapping,
+
+
