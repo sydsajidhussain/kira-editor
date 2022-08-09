@@ -4,7 +4,6 @@ use kira_editor::*;
 use crate::keyboard::*;
 use crate::editor_screen::*;
 use std::path::Path;
-use log::info;
 
 pub struct Editor {
     screen: Screen,
@@ -28,7 +27,7 @@ impl Editor{
             },
         })
     }
-    pub fn new(data: &[String],filename: Option<String>) -> Result<Self> {
+    pub fn new(filename: Option<String>) -> Result<Self> {
         Ok(Self {
             screen: Screen::new()?,
             keyboard: Keyboard {},
@@ -39,7 +38,6 @@ impl Editor{
     }
 
     pub fn new_with_file<T: AsRef<Path>+ ToString>(filename:&T) -> Result<Self> {
-
 
         let line: Vec<String> = std::fs::read_to_string(filename)
             .expect("Unable to open file")
@@ -67,8 +65,15 @@ impl Editor{
                     code: KeyCode::Backspace,
                     ..
                 }=> {
-                    self.del_char_left();
+                    self.del_char();
                 },
+                KeyEvent {
+                    code: KeyCode::Delete,
+                    modifiers: _,
+                } => {{
+                    self.cursor.x += 1;
+                }
+                self.del_char();},
                 KeyEvent {
                     code: KeyCode::Up,
                     modifiers: _,
@@ -107,7 +112,7 @@ impl Editor{
                 self.die("unable to refresh screen"
                 .to_string());
             }
-            self.screen.cursor_move_to(&self.cursor)?;
+            self.screen.move_cursor(&self.cursor)?;
             self.screen.flush()?;
             if self.process_keypress()? {
                 break;
@@ -144,16 +149,17 @@ impl Editor{
         }
     }
 
-    fn save(&self) {
-
+    fn save(&mut self) {
+        
         if self.filename.is_none() {
-            return;
+            self.filename = Some(self.prompt("Save as"));
         } 
-
+ 
         let buff = self.erows_to_string();
 
         let _ = std::fs::write(&self.filename.as_ref()
-            .unwrap(), buff);
+            .unwrap(), buff.clone());
+        
     }
 
     fn insert_char(&mut self, c: char) {
@@ -161,33 +167,33 @@ impl Editor{
         if !self.cursor.above(self.erows.len()) {
             self.erows.push(String::new());
         }
-        self.erows[self.cursor.y as usize].insert(self.cursor.x as usize, c);
+        self.erows[self.cursor.y].insert(self.cursor.x, c);
         self.cursor.x += 1;
     }
 
-    fn find(&mut self, query: String) {
+    fn search(&mut self, query: String) {
         
             for (i, row) in self.erows.iter().enumerate() {
                 if let Some(m) = row.match_indices(query.as_str()).take(1).next() {
-                    self.cursor.y = i as u16;
+                    self.cursor.y = i ;
                     break;
                 }
             }
     }
 
-    fn del_char_left(&mut self) {
+    fn del_char(&mut self) {
 
         if !self.cursor.above(self.erows.len()) {
             return;
         }
         if self.cursor.x > 0 {
-        self.erows[self.cursor.y as usize].remove(self.cursor.x as usize-1);
+        self.erows[self.cursor.y].remove(self.cursor.x-1);
         self.cursor.x -= 1;
         }
     }
 
     fn smart_undo(&mut self) {
-       
+    //    todo
     }
 
     fn erows_to_string(&self)-> String {
@@ -200,4 +206,37 @@ impl Editor{
         }
         buff
     }
+
+    
+
+    fn prompt(&mut self, prompt: &str) -> String {
+        let mut buf = String::from("");
+
+        loop {
+            let _ = self.refresh_screen();
+            let msg = format!("{}: {}", prompt, buf);
+            print!("{}",msg);
+            let _ = self.screen.flush();
+            if let Ok(keypress) = self.keyboard.read() {
+                match keypress {
+                    KeyEvent {
+                        code: KeyCode::Enter,
+                        ..
+                    } => {
+                        return buf;
+                    }
+                    KeyEvent {
+                        code: KeyCode::Char(c),
+                        modifiers: modif,
+                    } => {
+                        if matches!(modif, KeyModifiers::NONE | KeyModifiers::SHIFT) {
+                            buf.push(c);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+
 }

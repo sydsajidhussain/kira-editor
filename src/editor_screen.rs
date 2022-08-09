@@ -69,12 +69,8 @@ impl Screen {
         self.stdout.flush()
     }
 
-    pub fn cursor_position(&self) -> Result<(u16, u16)> {
-        cursor::position()
-    }
-
-    pub fn cursor_move_to(&mut self, pos: &Position) -> Result<()> {
-        self.stdout.queue(cursor::MoveTo(pos.x, pos.y))?;
+    pub fn move_cursor(&mut self, pos: &Position) -> Result<()> {
+        self.stdout.queue(cursor::MoveTo(pos.x as u16, pos.y as u16))?;
         Ok(())
     }
 }

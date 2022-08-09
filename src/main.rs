@@ -14,7 +14,7 @@ fn main() -> Result<()> {
     let mut editor = if args.len() >= 2 {        
         Editor::new_with_file(&args.nth(1).unwrap())?
     } else {
-        Editor::new(&[],None)?
+        Editor::new(None)?
     };
 
     editor.init()?;
