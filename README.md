@@ -1,5 +1,5 @@
 # kira-editor
-a minimal screen-based text editor based on rust  🦀 (experimental)
+a minimal screen-based text editor witten in rust  🦀 
 
 cargo run to start the editor || cargo run 'filename'  => to open a file
 
