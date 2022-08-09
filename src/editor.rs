@@ -67,14 +67,7 @@ impl Editor{
                     code: KeyCode::Backspace,
                     ..
                 }=> {
-                    if let KeyEvent {
-                        code: KeyCode::Delete,
-                        ..
-                    } = c
-                    {
-                        self.cursor.x += 1;
-                    }
-                    self.del_char();
+                    self.del_char_left();
                 },
                 KeyEvent {
                     code: KeyCode::Up,
@@ -182,7 +175,7 @@ impl Editor{
             }
     }
 
-    fn del_char(&mut self) {
+    fn del_char_left(&mut self) {
 
         if !self.cursor.above(self.erows.len()) {
             return;
@@ -194,7 +187,7 @@ impl Editor{
     }
 
     fn smart_undo(&mut self) {
-       ()
+       
     }
 
     fn erows_to_string(&self)-> String {
