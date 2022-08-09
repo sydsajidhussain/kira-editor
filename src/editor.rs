@@ -33,7 +33,7 @@ impl Editor{
             keyboard: Keyboard {},
             cursor: Position::default(),
             erows: Vec::new(),
-            filename: filename
+            filename
         })
     }
 
@@ -61,6 +61,11 @@ impl Editor{
                     modifiers: KeyModifiers::CONTROL, 
                 } => {
                     self.save()},
+                KeyEvent {
+                    code:KeyCode::Char('f'),
+                    modifiers: KeyModifiers::CONTROL, 
+                } => {
+                    self.search()},
                 KeyEvent {
                     code: KeyCode::Backspace,
                     ..
@@ -130,7 +135,7 @@ impl Editor{
     pub fn die(&mut self, msg: String) {
         let _ = self.screen.clear();
         let _ = terminal::disable_raw_mode();
-        eprintln!("{}", msg.to_string());
+        eprintln!("{}", msg);
         std::process::exit(1);
     }
 
@@ -152,13 +157,13 @@ impl Editor{
     fn save(&mut self) {
         
         if self.filename.is_none() {
-            self.filename = Some(self.prompt("Save as"));
+            self.filename = self.prompt("save as");
         } 
  
         let buff = self.erows_to_string();
 
         let _ = std::fs::write(&self.filename.as_ref()
-            .unwrap(), buff.clone());
+            .unwrap(), buff);
         
     }
 
@@ -171,15 +176,19 @@ impl Editor{
         self.cursor.x += 1;
     }
 
-    fn search(&mut self, query: String) {
+    fn search(&mut self) {
         
+        if let Some(query) = self.prompt("search") {
             for (i, row) in self.erows.iter().enumerate() {
-                if let Some(m) = row.match_indices(query.as_str()).take(1).next() {
+                if let Some(ln) = row.match_indices(query.as_str()).take(1).next() {
                     self.cursor.y = i ;
+                    self.cursor.x = ln.0; 
                     break;
                 }
             }
+        }
     }
+    
 
     fn del_char(&mut self) {
 
@@ -209,7 +218,7 @@ impl Editor{
 
     
 
-    fn prompt(&mut self, prompt: &str) -> String {
+    fn prompt(&mut self, prompt: &str) -> Option<String> {
         let mut buf = String::from("");
 
         loop {
@@ -223,7 +232,7 @@ impl Editor{
                         code: KeyCode::Enter,
                         ..
                     } => {
-                        return buf;
+                        return Some(buf);
                     }
                     KeyEvent {
                         code: KeyCode::Char(c),
